@@ -102,7 +102,7 @@ trait InMemoryCardanoApi {
 
       def notFound(msg: String): Future[CardanoApiResponse[T]] = {
         val json: String = ErrorMessage(msg, "404").asJson.noSpaces
-        val entity = HttpEntity(json)
+        val entity = HttpEntity(json).withContentType(ContentType.WithFixedCharset(MediaTypes.`application/json`))
         request.mapper(HttpResponse(status = StatusCodes.NotFound, entity = entity))
       }
 

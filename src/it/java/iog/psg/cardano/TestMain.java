@@ -5,6 +5,7 @@ import iog.psg.cardano.jpi.CardanoApi;
 import iog.psg.cardano.jpi.*;
 import scala.Enumeration;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -50,7 +51,7 @@ public class TestMain {
             List<CardanoApiCodec.Payment> pays =
                     Arrays.asList(
                             new CardanoApiCodec.Payment(unusedAddr.id(),
-                                    new CardanoApiCodec.QuantityUnit(1000000, lovelace)
+                                    new CardanoApiCodec.QuantityUnit(new scala.math.BigDecimal(new BigDecimal(1000000)), lovelace)
                             )
                     );
             CardanoApiCodec.CreateTransactionResponse resp =

@@ -7,6 +7,7 @@ import scala.Option;
 import scala.concurrent.Future;
 import scala.jdk.CollectionConverters;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.*;
@@ -72,11 +73,10 @@ public class JpiResponseCheck {
 
     }
 
-
-    public CardanoApiCodec.FundPaymentsResponse fundPayments(String walletId, long amountToTransfer) throws Exception {
+    public CardanoApiCodec.FundPaymentsResponse fundPayments(String walletId, BigDecimal amountToTransfer) throws Exception {
         List<CardanoApiCodec.WalletAddressId> unused = jpi.listAddresses(walletId, AddressFilter.UNUSED).toCompletableFuture().get(timeout, timeoutUnit);
         String unusedAddrId = unused.get(0).id();
-        CardanoApiCodec.QuantityUnit amount = new CardanoApiCodec.QuantityUnit(amountToTransfer, CardanoApiCodec.Units$.MODULE$.lovelace());
+        CardanoApiCodec.QuantityUnit amount = new CardanoApiCodec.QuantityUnit(new scala.math.BigDecimal(amountToTransfer), CardanoApiCodec.Units$.MODULE$.lovelace());
         CardanoApiCodec.Payment p = new CardanoApiCodec.Payment(unusedAddrId, amount);
         CardanoApiCodec.FundPaymentsResponse response = jpi.fundPayments(walletId, Collections.singletonList(p)).toCompletableFuture().get(timeout, timeoutUnit);
         return response;
@@ -87,7 +87,7 @@ public class JpiResponseCheck {
 
     }
 
-    public CardanoApiCodec.CreateTransactionResponse paymentToSelf(String wallet1Id, String passphrase, int amountToTransfer, Map<String, String> metadata) throws Exception {
+    public CardanoApiCodec.CreateTransactionResponse paymentToSelf(String wallet1Id, String passphrase, BigDecimal amountToTransfer, Map<String, String> metadata) throws Exception {
 
         Map<Long, String> metadataLongKey = new HashMap();
         metadata.forEach((k,v) -> {
@@ -97,10 +97,9 @@ public class JpiResponseCheck {
         CardanoApiCodec.TxMetadataMapIn in = MetadataBuilder.withMap(metadataLongKey);
         List<CardanoApiCodec.WalletAddressId> unused = jpi.listAddresses(wallet1Id, AddressFilter.UNUSED).toCompletableFuture().get(timeout, timeoutUnit);
         String unusedAddrIdWallet1 = unused.get(0).id();
-        CardanoApiCodec.QuantityUnit amount = new CardanoApiCodec.QuantityUnit(amountToTransfer, CardanoApiCodec.Units$.MODULE$.lovelace());
+        CardanoApiCodec.QuantityUnit amount = new CardanoApiCodec.QuantityUnit(new scala.math.BigDecimal(amountToTransfer), CardanoApiCodec.Units$.MODULE$.lovelace());
         List<CardanoApiCodec.Payment> payments = Collections.singletonList(new CardanoApiCodec.Payment(unusedAddrIdWallet1, amount));
         CardanoApiCodec.EstimateFeeResponse response = jpi.estimateFee(wallet1Id, payments).toCompletableFuture().get(timeout, timeoutUnit);
-        long max = response.estimatedMax().quantity();
         return jpi.createTransaction(wallet1Id, passphrase, payments, in, null).toCompletableFuture().get(timeout, timeoutUnit);
 
     }
@@ -131,7 +130,7 @@ public class JpiResponseCheck {
                 if(request.request().uri().path().endsWith("wallets", true)) {
                     Enumeration.Value lovelace = CardanoApiCodec.Units$.MODULE$.Value(CardanoApiCodec.Units$.MODULE$.lovelace().toString());
                     Enumeration.Value sync = CardanoApiCodec.SyncState$.MODULE$.Value(CardanoApiCodec.SyncState$.MODULE$.ready().toString());
-                    CardanoApiCodec.QuantityUnit dummy = new CardanoApiCodec.QuantityUnit(1, lovelace);
+                    CardanoApiCodec.QuantityUnit dummy = new CardanoApiCodec.QuantityUnit(new scala.math.BigDecimal(new BigDecimal(1)), lovelace);
                     CardanoApiCodec.SyncStatus state = new CardanoApiCodec.SyncStatus(
                             sync,
                             Option.apply(null)

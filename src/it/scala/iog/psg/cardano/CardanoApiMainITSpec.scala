@@ -3,7 +3,6 @@ package iog.psg.cardano
 import java.time.ZonedDateTime
 
 import akka.actor.ActorSystem
-import io.circe.Encoder
 import io.circe.generic.auto._
 import io.circe.parser.{decode, _}
 import iog.psg.cardano.CardanoApiCodec.WalletAddressId

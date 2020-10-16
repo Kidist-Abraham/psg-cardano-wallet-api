@@ -136,7 +136,7 @@ class CardanoJpiITSpec extends AnyFlatSpec with Matchers with Configure with Mod
   }
 
   it should "fund payments" in new TestWalletFixture(1) {
-    val response = sut.fundPayments(testWalletId, testAmountToTransfer.get.toInt)
+    val response = sut.fundPayments(testWalletId, BigDecimal(testAmountToTransfer.get).bigDecimal)
 
   }
 
@@ -148,7 +148,7 @@ class CardanoJpiITSpec extends AnyFlatSpec with Matchers with Configure with Mod
     )
 
     val createTxResponse =
-      sut.paymentToSelf(testWalletId, testWalletPassphrase, testAmountToTransfer.get.toInt, metadata.asJava)
+      sut.paymentToSelf(testWalletId, testWalletPassphrase, BigDecimal(testAmountToTransfer.get).bigDecimal, metadata.asJava)
     val id = createTxResponse.id
     val getTxResponse = sut.getTx(testWalletId, createTxResponse.id)
 

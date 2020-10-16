@@ -1,5 +1,6 @@
 package iog.psg.cardano
 
+import java.nio.charset.StandardCharsets
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -8,8 +9,10 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.unmarshalling.Unmarshaller.eitherUnmarshaller
 import akka.stream.Materializer
+import akka.stream.scaladsl.{Sink, Source}
 import akka.util.ByteString
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.generic.extras._
@@ -260,7 +263,7 @@ object CardanoApiCodec {
   }
 
   case class QuantityUnit(
-                           quantity: Long,
+                           quantity: BigDecimal,
                            unit: Units
                          )
 
@@ -377,7 +380,6 @@ object CardanoApiCodec {
 
 
     def to[T](f: HttpEntity.Strict => Future[CardanoApiResponse[T]]): Future[CardanoApiResponse[T]] = {
-
       response.entity.contentType match {
         case WithFixedCharset(MediaTypes.`application/json`) =>
           // Load into memory using toStrict
@@ -401,7 +403,6 @@ object CardanoApiCodec {
 
     def toWallets: Future[CardanoApiResponse[Seq[Wallet]]]
     = to[Seq[Wallet]](Unmarshal(_).to[CardanoApiResponse[Seq[Wallet]]])
-
 
     def toWalletAddressIds: Future[CardanoApiResponse[Seq[WalletAddressId]]]
     = to[Seq[WalletAddressId]](Unmarshal(_).to[CardanoApiResponse[Seq[WalletAddressId]]])
