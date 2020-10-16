@@ -2,12 +2,13 @@ package iog.psg.cardano.jpi
 
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
+import java.math.{ BigDecimal => JBigDecimal }
 
 import iog.psg.cardano.CardanoApiCodec._
 import iog.psg.cardano.TestWalletsConfig
 import iog.psg.cardano.TestWalletsConfig.baseUrl
 import iog.psg.cardano.common.TestWalletFixture
-import iog.psg.cardano.util.{Configure, CustomPatienceConfiguration, ModelCompare}
+import iog.psg.cardano.util.{Configure, ModelCompare}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -136,7 +137,7 @@ class CardanoJpiITSpec extends AnyFlatSpec with Matchers with Configure with Mod
   }
 
   it should "fund payments" in new TestWalletFixture(1) {
-    val response = sut.fundPayments(testWalletId, BigDecimal(testAmountToTransfer.get).bigDecimal)
+    val response = sut.fundPayments(testWalletId, new JBigDecimal(testAmountToTransfer.get))
 
   }
 
@@ -148,7 +149,7 @@ class CardanoJpiITSpec extends AnyFlatSpec with Matchers with Configure with Mod
     )
 
     val createTxResponse =
-      sut.paymentToSelf(testWalletId, testWalletPassphrase, BigDecimal(testAmountToTransfer.get).bigDecimal, metadata.asJava)
+      sut.paymentToSelf(testWalletId, testWalletPassphrase, new JBigDecimal(testAmountToTransfer.get), metadata.asJava)
     val id = createTxResponse.id
     val getTxResponse = sut.getTx(testWalletId, createTxResponse.id)
 

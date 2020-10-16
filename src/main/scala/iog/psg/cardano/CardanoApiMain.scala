@@ -106,7 +106,7 @@ object CardanoApiMain {
           unwrap[Seq[CardanoApiCodec.Wallet]](api.listWallets.executeBlocking, r => r.foreach(trace(_)))
         } else if (hasArgument(CmdLine.estimateFee)) {
           val walletId = arguments.get(CmdLine.walletId)
-          val amount = arguments.get(CmdLine.amount).toDouble
+          val amount = BigDecimal(arguments.get(CmdLine.amount))
           val addr = arguments.get(CmdLine.address)
           val singlePayment = Payment(addr, QuantityUnit(amount, Units.lovelace))
           val payments = Payments(Seq(singlePayment))
@@ -134,7 +134,7 @@ object CardanoApiMain {
           unwrap[CardanoApiCodec.CreateTransactionResponse](api.getTransaction(walletId, txId).executeBlocking, trace(_))
         } else if (hasArgument(CmdLine.createTx)) {
           val walletId = arguments.get(CmdLine.walletId)
-          val amount = arguments.get(CmdLine.amount).toDouble
+          val amount = BigDecimal(arguments.get(CmdLine.amount))
           val addr = arguments.get(CmdLine.address)
           val pass = arguments.get(CmdLine.passphrase)
           val metadata = toMetaMap(arguments(CmdLine.metadata))
@@ -151,7 +151,7 @@ object CardanoApiMain {
 
         } else if (hasArgument(CmdLine.fundTx)) {
           val walletId = arguments.get(CmdLine.walletId)
-          val amount = arguments.get(CmdLine.amount).toDouble
+          val amount = BigDecimal(arguments.get(CmdLine.amount))
           val addr = arguments.get(CmdLine.address)
           val singlePayment = Payment(addr, QuantityUnit(amount, Units.lovelace))
           val payments = Payments(Seq(singlePayment))
